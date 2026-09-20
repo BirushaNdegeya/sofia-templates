@@ -2,8 +2,7 @@ import { useMemo } from "react";
 import { useSearchParams } from "react-router";
 import { getTemplateCategories, templates } from "@/assets/data";
 import { TemplateCard } from "../cards/template-card";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Chip } from "../ui/chip";
 
 export default function Templates() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -45,37 +44,28 @@ export default function Templates() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+    <div className="px-4 py-8 nav:px-6 nav:py-10 wide:px-10">
       <div className="max-w-2xl">
-        <h1 className="text-3xl font-bold tracking-tight">Templates</h1>
-        <p className="mt-2 text-muted-foreground">
+        <h1 className="md-headline-large text-on-surface">Templates</h1>
+        <p className="md-body-large mt-2 text-on-surface-variant">
           Preview a design, then download the full folder or copy the HTML to use it in your project.
         </p>
       </div>
 
-      <div className="mt-8 flex flex-col gap-4">
-        <Input
-          value={query}
-          onChange={(event) => updateParams({ q: event.target.value })}
-          placeholder="Search by name, category, or use case..."
-          aria-label="Search templates"
-        />
-        <div className="flex flex-wrap gap-2">
-          {categories.map((item) => (
-            <Button
-              key={item}
-              size="sm"
-              variant={category === item ? "default" : "outline"}
-              onClick={() => updateParams({ category: item })}
-            >
-              {item === "all" ? "All" : item.charAt(0).toUpperCase() + item.slice(1)}
-            </Button>
-          ))}
-        </div>
+      <div className="mt-8 flex flex-wrap gap-2">
+        {categories.map((item) => (
+          <Chip
+            key={item}
+            selected={category === item}
+            onClick={() => updateParams({ category: item })}
+          >
+            {item === "all" ? "All" : item.charAt(0).toUpperCase() + item.slice(1)}
+          </Chip>
+        ))}
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-12 text-muted-foreground">
+        <p className="md-body-large mt-12 text-on-surface-variant">
           No templates match that search. Try a different keyword or category.
         </p>
       ) : (
