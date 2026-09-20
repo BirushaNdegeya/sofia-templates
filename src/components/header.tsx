@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router";
 import { Icon } from "@/components/icon";
+import { Logo } from "@/components/logo";
 import { ModeToggle } from "./mode-toggle";
 import { SearchBar } from "./ui/search-bar";
 import { Button } from "./ui/button";
@@ -50,13 +51,10 @@ function Header() {
       <div className="flex h-16 items-center gap-2 px-2 nav:h-16 nav:gap-4 nav:px-4 wide:px-6">
         <Link
           to="/"
-          className="flex shrink-0 items-center gap-2 px-2 text-on-surface"
+          className="flex shrink-0 items-center px-2 text-on-surface"
           aria-label="Sofia Templates home"
         >
-          <span className="grid size-10 place-items-center rounded-full bg-primary-container text-on-primary-container">
-            <Icon name="web" filled />
-          </span>
-          <span className="md-title-large hidden nav:inline">Sofia Templates</span>
+          <Logo showWordmark className="[&>span]:hidden nav:[&>span]:inline" />
         </Link>
 
         <div className="mx-auto min-w-0 flex-1 max-w-3xl">

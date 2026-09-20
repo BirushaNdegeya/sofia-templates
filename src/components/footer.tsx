@@ -1,10 +1,16 @@
 import { Link } from "react-router";
 import { Icon } from "@/components/icon";
+import { Logo } from "@/components/logo";
 
 export default function Footer() {
   return (
     <footer className="mt-auto border-t border-outline-variant bg-surface-container-low">
       <div className="px-6 py-10 lg:px-8">
+        <div className="mb-8 flex justify-center">
+          <Link to="/" aria-label="Sofia Templates home">
+            <Logo showWordmark />
+          </Link>
+        </div>
         <nav className="mb-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
           <Link to="/templates" className="md-label-large text-on-surface-variant hover:text-primary">
             Templates
