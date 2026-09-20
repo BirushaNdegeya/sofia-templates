@@ -1,101 +1,117 @@
-import { useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Github, Menu, X } from "lucide-react";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router";
 import { ModeToggle } from "./mode-toggle";
-import { Github } from "lucide-react";
 import { Input } from "./ui/input";
-import { Link } from "react-router";
-
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (location.pathname === "/templates") {
+      setQuery(searchParams.get("q") ?? "");
+    }
+  }, [location.pathname, searchParams]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  const submitSearch = (event: FormEvent) => {
+    event.preventDefault();
+    const nextQuery = query.trim();
+    navigate(nextQuery ? `/templates?q=${encodeURIComponent(nextQuery)}` : "/templates");
+    setIsOpen(false);
+  };
+
   return (
-    <header className="bg-background text-foreground border-b border-border sticky top-0 z-50">
-      <nav className="mx-auto container">
-        <div className="flex justify-between items-center h-14">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/95 text-foreground backdrop-blur">
+      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between gap-4">
           <div className="flex items-center gap-6">
-            {/* Logo */}
-            <div className="flex items-center">
-              <Link to="/" className="text-primary font-semibold text-xl">
-                SOFIA Tech
-              </Link>
-            </div>
-
-            {/* Navigation desktop */}
-            <div className="hidden md:flex items-center space-x-2 gap-6">
-
-              <Link to="/templates" className="text-muted-foreground hover:text-foreground py-2">
+            <Link to="/" className="text-xl font-semibold text-primary">
+              Sofia Templates
+            </Link>
+            <div className="hidden items-center gap-6 md:flex">
+              <Link to="/templates" className="text-muted-foreground hover:text-foreground">
                 Templates
               </Link>
-              <a href="#docs" className="text-muted-foreground hover:text-foreground py-2">
-                About Us
-              </a>
-              <a href="#products" className="text-muted-foreground hover:text-foreground py-2">
-                Blogs
-              </a>
+              <Link to="/about" className="text-muted-foreground hover:text-foreground">
+                How to use
+              </Link>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            {/* Search bar */}
-            <div className="relative ml-4">
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <form onSubmit={submitSearch} className="relative hidden sm:block">
               <Input
-                type="text"
-                placeholder="Search..."
-                className="w-[200px] pl-3 pr-8 py-1 text-sm border border-input rounded-md focus:outline-none focus:border-ring"
+                ref={searchRef}
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search templates"
+                className="w-[180px] pr-14 lg:w-[240px]"
+                aria-label="Search templates"
               />
-              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">Ctrl+K</span>
-            </div>
-
-            {/* Theme toggle */}
-            <ModeToggle />
-
-            {/* GitHub icon */}
-            <a href="#github" className="ml-2 text-muted-foreground hover:text-foreground">
-              <Github className="h-6 w-6" />
-            </a>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden flex items-center">
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-primary hover:bg-accent"
-              >
-                <svg
-                  className={`h-6 w-6 ${isOpen ? "hidden" : "block"}`}
-                  stroke="currentColor"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-                <svg
-                  className={`h-6 w-6 ${isOpen ? "block" : "hidden"}`}
-                  stroke="currentColor"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+              <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                Ctrl+K
+              </span>
+              <button type="submit" className="sr-only">
+                Search
               </button>
-            </div>
-
-            {/* Menu mobile */}
-            <div className={`md:hidden ${isOpen ? "block" : "hidden"}`}>
-              <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#home" className="block text-gray-700 hover:text-blue-600 px-3 py-2 font-medium">
-                  Accueil
-                </a>
-                <a href="#templates" className="block text-gray-700 hover:text-blue-600 px-3 py-2 font-medium">
-                  Templates
-                </a>
-                <a href="#about" className="block text-gray-700 hover:text-blue-600 px-3 py-2 font-medium">
-                  À propos
-                </a>
-                <a href="#contact" className="block text-gray-700 hover:text-blue-600 px-3 py-2 font-medium">
-                  Contact
-                </a>
-              </div>
-            </div>
+            </form>
+            <ModeToggle />
+            <a
+              href="https://github.com/sofiatechnology/website-templates"
+              target="_blank"
+              rel="noreferrer"
+              className="text-muted-foreground hover:text-foreground"
+              aria-label="GitHub repository"
+            >
+              <Github className="h-5 w-5" />
+            </a>
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground md:hidden"
+              onClick={() => setIsOpen((open) => !open)}
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
         </div>
+
+        {isOpen ? (
+          <div className="space-y-3 border-t border-border py-4 md:hidden">
+            <form onSubmit={submitSearch}>
+              <Input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search templates"
+                aria-label="Search templates"
+              />
+            </form>
+            <Link to="/templates" className="block py-2" onClick={() => setIsOpen(false)}>
+              Templates
+            </Link>
+            <Link to="/about" className="block py-2" onClick={() => setIsOpen(false)}>
+              How to use
+            </Link>
+          </div>
+        ) : null}
       </nav>
     </header>
   );

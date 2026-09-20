@@ -6,9 +6,11 @@ import { ThemeProvider } from "@/providers/theme-provider";
 export default function Layout() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className="bg-background text-foreground">
+      <div className="flex min-h-screen flex-col bg-background text-foreground">
         <Header />
-        <Outlet />
+        <main className="flex-1">
+          <Outlet />
+        </main>
         <Footer />
       </div>
     </ThemeProvider>

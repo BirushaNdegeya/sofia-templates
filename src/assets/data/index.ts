@@ -1,5 +1,5 @@
-import { templates} from './templates';
-
 export {
   templates,
-}
+  getTemplateBySlug,
+  getTemplateCategories,
+} from "./templates";
